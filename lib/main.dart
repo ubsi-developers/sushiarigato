@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sushiarigato/helpers/theme_colors.dart';
 import 'package:sushiarigato/ui/welcome.dart';
 
 void main() {
@@ -15,11 +16,10 @@ class MyApp extends StatelessWidget {
       title: 'Sushiarigato',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Roboto',
-        brightness: Brightness.dark,
-        primaryColor: Colors.black,
-        scaffoldBackgroundColor: Colors.black,
-      ),
+          fontFamily: 'Roboto',
+          brightness: Brightness.light,
+          primaryColor: ThemeColors.white(),
+          scaffoldBackgroundColor: ThemeColors.light()),
       home: const Welcome(),
     );
   }

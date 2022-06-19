@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sushiarigato/ui/home.dart';
+import 'package:sushiarigato/helpers/theme_colors.dart';
+import 'package:sushiarigato/ui/admin/product/product_list.dart';
+import 'package:sushiarigato/bloc/login_bloc.dart';
+import 'package:sushiarigato/helpers/session.dart';
+import 'package:sushiarigato/widget/warning_dialog.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -10,7 +14,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
+  late bool _isLoading = false;
 
   final _emailTextboxController = TextEditingController();
   final _passwordTextboxController = TextEditingController();
@@ -19,75 +23,92 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        height: MediaQuery.of(context).size.height * 1,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage("images/bg-sushiarigato.jpg"),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                  Color.fromRGBO(0, 0, 0, 0.6), BlendMode.darken)),
+            image: const AssetImage("images/bg-sushiarigato.jpg"),
+            fit: BoxFit.cover,
+            colorFilter:
+                ColorFilter.mode(ThemeColors.darkOverlay50(), BlendMode.darken),
+          ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Column(
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 15, bottom: 15),
-                  child: const Text(
-                    'SushiArigato',
-                    style: TextStyle(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 15, bottom: 15),
+                    child: Text(
+                      'SushiArigato',
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
-                        color: Color.fromRGBO(255, 166, 116, 1)),
+                        color: ThemeColors.primary(),
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Container(
-              margin: const EdgeInsets.only(
-                  top: 15, bottom: 15, left: 15, right: 15),
-              child: SizedBox(
-                height: 400,
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  color: const Color.fromRGBO(0, 0, 0, 0.5),
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                        top: 20, bottom: 20, left: 20, right: 20),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          _titleForm(),
-                          Row(
-                            children: [
-                              _labelEmail(),
-                            ],
-                          ),
-                          _inputEmail(),
-                          Row(
-                            children: [
-                              _labelPassword(),
-                            ],
-                          ),
-                          _inputPassword(),
-                          _buttonLogin(),
-                        ],
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                    top: 15, bottom: 15, left: 15, right: 15),
+                child: SizedBox(
+                  height: 400,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: ThemeColors.whiteOverlay80(),
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: 20,
+                        bottom: 20,
+                        left: 20,
+                        right: 20,
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            _titleForm(),
+                            Row(
+                              children: [
+                                _labelForm("Email Address"),
+                              ],
+                            ),
+                            _inputForm(
+                              _emailTextboxController,
+                              TextInputType.emailAddress,
+                            ),
+                            Row(
+                              children: [
+                                _labelForm("Password"),
+                              ],
+                            ),
+                            _inputFormSecure(
+                              _passwordTextboxController,
+                              TextInputType.text,
+                            ),
+                            _buttonLogin(),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _titleForm() {
+  _titleForm() {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: const Text(
@@ -100,12 +121,12 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _labelEmail() {
+  _labelForm(String text) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
-      child: const Text(
-        "Email",
-        style: TextStyle(
+      child: Text(
+        text,
+        style: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
@@ -113,80 +134,71 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _inputEmail() {
+  _inputForm(dynamic controller, TextInputType type) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: TextFormField(
-        style: const TextStyle(fontSize: 14, color: Colors.black),
-        cursorColor: Colors.black,
-        keyboardType: TextInputType.emailAddress,
-        controller: _emailTextboxController,
+        style: TextStyle(
+          fontSize: 14,
+          color: ThemeColors.dark(),
+        ),
+        cursorColor: ThemeColors.dark(),
+        keyboardType: type,
+        controller: controller,
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
           border: OutlineInputBorder(
-            borderSide:
-                const BorderSide(color: Colors.white, style: BorderStyle.none),
+            borderSide: BorderSide(
+              color: ThemeColors.white(),
+              style: BorderStyle.none,
+            ),
             borderRadius: BorderRadius.circular(10),
           ),
-          fillColor: Colors.white,
+          fillColor: ThemeColors.white(),
           filled: true,
         ),
         validator: (String? value) {
           if (value!.isEmpty) {
-            return 'Email harus diisi';
+            return 'Tidak boleh kosong';
           }
-          Pattern pattern =
-              r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zAZ]{2,}))$';
-          RegExp regex = RegExp(pattern.toString());
-          if (!regex.hasMatch(value)) {
-            return "Email tidak valid";
-          }
+
           return null;
         },
       ),
     );
   }
 
-  Widget _labelPassword() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      child: const Text(
-        "Password",
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _inputPassword() {
+  _inputFormSecure(dynamic controller, TextInputType type) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: TextFormField(
-        style: const TextStyle(fontSize: 14, color: Colors.black),
+        style: TextStyle(
+          fontSize: 14,
+          color: ThemeColors.dark(),
+        ),
+        cursorColor: ThemeColors.dark(),
+        keyboardType: type,
+        controller: controller,
         obscureText: true,
-        cursorColor: Colors.black,
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
           border: OutlineInputBorder(
-            borderSide:
-                const BorderSide(color: Colors.white, style: BorderStyle.none),
+            borderSide: BorderSide(
+              color: ThemeColors.white(),
+              style: BorderStyle.none,
+            ),
             borderRadius: BorderRadius.circular(10),
           ),
-          fillColor: Colors.white,
+          fillColor: ThemeColors.white(),
           filled: true,
         ),
         validator: (String? value) {
           if (value!.isEmpty) {
-            return "Password harus diisi";
+            return 'Tidak boleh kosong';
           }
 
-          if (value.length < 8) {
-            return "Password harus minimal 8 karakter";
-          }
           return null;
         },
       ),
@@ -198,24 +210,76 @@ class _LoginState extends State<Login> {
       margin: const EdgeInsets.only(top: 10),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            primary: const Color(0xFFDA580F),
-            minimumSize: const Size.fromHeight(45),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50))),
+          primary: ThemeColors.primary(),
+          minimumSize: const Size.fromHeight(45),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
         onPressed: () {
           var validate = _formKey.currentState!.validate();
-          if(validate){
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => const Home()));
+          if (validate) {
+            var validate = _formKey.currentState!.validate();
+            if (validate) {
+              if (!_isLoading) _submitLogin();
+            }
           }
         },
-        child: const Text(
+        child: Text(
           "Login",
           style: TextStyle(
-            color: Color.fromRGBO(255, 255, 255, 1),
+            color: ThemeColors.white(),
           ),
         ),
       ),
     );
+  }
+
+  void _submitLogin() {
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
+    LoginBloc.login(
+      // email: _emailTextboxController.text,
+      // password: _passwordTextboxController.text,
+      email: "users1@gmail.com",
+      password: "secret",
+    ).then((value) async {
+      try {
+        await Session().setToken(
+          value.token.toString(),
+        );
+
+        await Session().setUserId(value.userID.toString());
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProductList(),
+          ),
+        );
+      } catch (error) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => WarningDialog(
+            description: "Login gagal, silahkan coba lagi. ${error.toString()}",
+          ),
+        );
+      }
+    }, onError: (error) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => WarningDialog(
+          description: "Login gagal, silahkan coba lagi. ${error.toString()}",
+        ),
+      );
+    });
+    setState(() {
+      _isLoading = false;
+    });
   }
 }

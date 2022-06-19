@@ -1,5 +1,3 @@
-import 'package:sushiarigato/helpers/api_url.dart';
-
 class Category {
   int? id;
   String? name;
@@ -15,7 +13,7 @@ class Category {
     return Category(
       id: obj['id'],
       name: obj['name'],
-      image: ApiUrl.product_images_url(obj["id"]),
+      image: obj["image"],
     );
   }
 }

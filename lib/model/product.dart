@@ -1,5 +1,3 @@
-import 'package:sushiarigato/helpers/api_url.dart';
-
 class Product {
   int? id;
   String? name;
@@ -28,7 +26,7 @@ class Product {
       id: obj['id'],
       name: obj["name"],
       description: obj["description"],
-      image: ApiUrl.product_images_url(obj["id"]),
+      image: obj["image"],
       price: obj["price"],
       discountPrice: obj["discount_price"],
       discount: obj["discount"],

@@ -1,57 +1,82 @@
-// ignore_for_file: non_constant_identifier_names
-
-import 'dart:convert';
-
+import 'package:sushiarigato/config/url.dart';
 import 'package:sushiarigato/helpers/api.dart';
-import 'package:sushiarigato/helpers/api_url.dart';
-
-import 'package:sushiarigato/model/Product.dart';
+import 'package:sushiarigato/model/product.dart';
 
 class ProductBloc {
-  static Future<List<Product>> getProducts() async {
-    var apiUrl = Uri.parse(ApiUrl.products);
-    var response = await Api().get(apiUrl);
-    var jsonObj = json.decode(response.body);
+  static Future<List<dynamic>> get(int? categoryId) async {
+    try {
+      var url = Url.products;
+      if (categoryId != null) {
+        url += "?category=$categoryId";
+      }
+      var response = await Api().get(url);
 
-    List<dynamic> body = (jsonObj as Map<String, dynamic>)['data'];
-    List<Product> Products = [];
+      List<dynamic> body = (response as Map<String, dynamic>)['data'];
+      List<Product> products = [];
 
-    for (int i = 0; i < body.length; i++) {
-      Products.add(Product.fromJson(body[i]));
+      for (int i = 0; i < body.length; i++) {
+        products.add(Product.fromJson(body[i]));
+      }
+
+      return products;
+    } catch (error) {
+      return [];
     }
-
-    return Products;
   }
-//
-// static Future addProduct({Product? Product}) async {
-//   String apiUrl = ApiUrl.products;
-//   var body = {
-//     "kode_Product": Product!.kodeProduk,
-//     "nama_Product": Product.namaProduk,
-//     "harga": Product.hargaProduk.toString()
-//   };
-//   var response = await Api().post(apiUrl, body);
-//   var jsonObj = json.decode(response.body);
-//   return jsonObj['status'];
-// }
-//
-// static Future<bool> updateProduct({required Product Product}) async {
-//   String apiUrl = "${ApiUrl.products}/${Product.id}";
-//   var body = {
-//     "kode_Product": Product.namaProduk,
-//     "nama_Product": Product.namaProduk,
-//     "harga": Product.hargaProduk.toString()
-//   };
-//   print("Body : $body");
-//   var response = await Api().post(apiUrl, body);
-//   var jsonObj = json.decode(response.body);
-//   return jsonObj['data'];
-// }
-//
-// static Future<bool> deleteProduct({int? id}) async {
-//   String apiUrl = "${ApiUrl.products}/$id";
-//   var response = await Api().delete(apiUrl);
-//   var jsonObj = json.decode(response.body);
-//   return (jsonObj as Map<String, dynamic>)['data'];
-// }
+
+  static Future<dynamic> add({required Product product}) async {
+    try {
+      var url = Url.products;
+      var body = {
+        "name": product.name,
+        "description": product.description,
+        "image": product.image,
+        "price": product.price.toString(),
+        "discount": product.discount.toString(),
+        "category_id": product.categoryId.toString(),
+      };
+      var response = await Api().post(url, body);
+
+      return {
+        "status": response["status"],
+        "message": response["message"],
+      };
+    } catch (error) {
+      return error;
+    }
+  }
+
+  static Future<dynamic> edit({required Product product}) async {
+    try {
+      var url = "${Url.products}/${product.id}";
+      var body = {
+        "name": product.name,
+        "description": product.description,
+        "image": product.image,
+        "price": product.price.toString(),
+        "discount": product.discount.toString(),
+        "category_id": product.categoryId.toString(),
+      };
+      var response = await Api().put(url, body);
+      return {
+        "status": response["status"],
+        "message": response["message"],
+      };
+    } catch (error) {
+      return error;
+    }
+  }
+
+  static Future<dynamic> delete({required Product product}) async {
+    try {
+      var url = "${Url.products}/${product.id}";
+      var response = await Api().delete(url);
+      return {
+        "status": response["status"],
+        "message": response["message"],
+      };
+    } catch (error) {
+      return error;
+    }
+  }
 }

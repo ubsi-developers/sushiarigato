@@ -8,11 +8,11 @@ class Consts {
   static const double avatarRadius = 66.0;
 }
 
-class SuccessDialog extends StatelessWidget {
+class WarningDialog extends StatelessWidget {
   final String? description;
   final VoidCallback? okClick;
 
-  const SuccessDialog({Key? key, this.description, this.okClick})
+  const WarningDialog({Key? key, this.description, this.okClick})
       : super(key: key);
 
   @override
@@ -51,13 +51,10 @@ class SuccessDialog extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            "Berhasil",
+          const Text(
+            "Gagal",
             style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.w700,
-              color: ThemeColors.success(),
-            ),
+                fontSize: 24.0, fontWeight: FontWeight.w700, color: Colors.red),
           ),
           const SizedBox(height: 16.0),
           Text(

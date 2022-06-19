@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sushiarigato/ui/home.dart';
+import 'package:sushiarigato/ui/public/category/category_list.dart';
 import 'package:sushiarigato/ui/login.dart';
+import 'package:sushiarigato/helpers/theme_colors.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({Key? key}) : super(key: key);
@@ -14,48 +15,51 @@ class _WelcomeState extends State<Welcome> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage("images/bg-sushiarigato.jpg"),
-              fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                  Color.fromRGBO(0, 0, 0, 0.6), BlendMode.darken)),
+            image: const AssetImage("images/bg-sushiarigato.jpg"),
+            fit: BoxFit.cover,
+            colorFilter:
+                ColorFilter.mode(ThemeColors.darkOverlay80(), BlendMode.darken),
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-                margin: const EdgeInsets.only(top: 8),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Hi, Sahabat',
+              margin: const EdgeInsets.only(top: 8),
+              child: Column(
+                children: [
+                  Text(
+                    'Hi, Sahabat',
+                    style: TextStyle(
+                      color: ThemeColors.white(),
+                    ),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 15, bottom: 15),
+                    child: Text(
+                      'SushiArigato',
                       style: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 1),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        color: ThemeColors.primary(),
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 15, bottom: 15),
-                      child: const Text(
-                        'SushiArigato',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 35,
-                            color: Color.fromRGBO(255, 166, 116, 1)),
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 200),
+                    child: Text(
+                      'Pilih menu tanpa ribet',
+                      style: TextStyle(
+                        color: ThemeColors.white(),
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 200),
-                      child: const Text(
-                        'Pilih menu tanpa ribet',
-                        style: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1),
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
+                  ),
+                ],
+              ),
+            ),
             _buttonFind(),
             _buttonLogin(),
           ],
@@ -69,18 +73,23 @@ class _WelcomeState extends State<Welcome> {
       margin: const EdgeInsets.only(top: 15, left: 30, right: 30),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            primary: const Color(0xFFDA580F),
-            fixedSize: const Size(250, 45),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50))),
+          primary: ThemeColors.primary(),
+          fixedSize: const Size(250, 45),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
         onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const Home()));
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const CategoryList(),
+            ),
+          );
         },
-        child: const Text(
+        child: Text(
           "Cari Menu",
           style: TextStyle(
-            color: Color.fromRGBO(255, 255, 255, 1),
+            color: ThemeColors.white(),
           ),
         ),
       ),
@@ -92,18 +101,23 @@ class _WelcomeState extends State<Welcome> {
       margin: const EdgeInsets.only(top: 15, left: 30, right: 30),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            primary: const Color(0xFFFDDCC4),
-            fixedSize: const Size(250, 45),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50))),
+          primary: ThemeColors.secondary(),
+          fixedSize: const Size(250, 45),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
         onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => const Login()));
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const Login(),
+            ),
+          );
         },
-        child: const Text(
+        child: Text(
           "Masuk",
           style: TextStyle(
-            color: Color(0xFFDA580F),
+            color: ThemeColors.primary(),
           ),
         ),
       ),
