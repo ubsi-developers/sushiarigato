@@ -1,304 +1,361 @@
-// import 'package:flutter/material.dart';
-// import 'package:sushiarigato/ui/home.dart';
+import 'dart:core';
 
-// class Register extends StatefulWidget {
-//   const Register({Key? key}) : super(key: key);
+import 'package:flutter/material.dart';
+import 'package:sushiarigato/helpers/theme_colors.dart';
+import 'package:sushiarigato/ui/admin/product/product_list.dart';
+import 'package:sushiarigato/bloc/register_bloc.dart';
+import 'package:sushiarigato/helpers/session.dart';
+import 'package:sushiarigato/widget/loading_dialog.dart';
+import 'package:sushiarigato/widget/success_dialog.dart';
+import 'package:sushiarigato/widget/warning_dialog.dart';
 
-//   @override
-//   State<Register> createState() => _RegisterState();
-// }
+class Register extends StatefulWidget {
+  const Register({Key? key}) : super(key: key);
 
-// class _RegisterState extends State<Register> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: SingleChildScrollView(
-//         child: Container(
+  @override
+  State<Register> createState() => _RegisterState();
+}
 
-//           padding: const EdgeInsets.only(top: 100, bottom: 100),
-//           decoration: BoxDecoration(
-//             image: DecorationImage(
-//                 image: AssetImage("images/bg-sushiarigato.jpg"),
-//                 fit: BoxFit.cover,
-//                 colorFilter: ColorFilter.mode(
-//                     Color.fromRGBO(0, 0, 0, 0.6), BlendMode.darken),),
-//           ),
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             crossAxisAlignment: CrossAxisAlignment.stretch,
-//             children: [
-//               Column(
-//                 children: [
-//                   Container(
-//                     margin: const EdgeInsets.only(top: 15, bottom: 15),
-//                     child: Text(
-//                       'SushiArigato',
-//                       style: TextStyle(
-//                           fontWeight: FontWeight.bold,
-//                           fontSize: 25,
-//                           color: ThemeColors.primary(),),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//               Container(
-//                 margin: const EdgeInsets.only(
-//                     top: 15, bottom: 15, left: 15, right: 15),
-//                 child: SizedBox(
-//                   child: Card(
-//                     shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(15),),
-//                     color: Color.fromRGBO(0, 0, 0, 0.5),
-//                     child: Container(
-//                       margin: const EdgeInsets.only(
-//                           top: 20, bottom: 20, left: 20, right: 20),
-//                       child: SingleChildScrollView(
-//                         child: Column(
-//                           children: [
-//                             _titleAuth(),
-//                             Row(
-//                               children: [
-//                                 _labelName(),
-//                               ],
-//                             ),
-//                             _inputName(),
-//                             Row(
-//                               children: [
-//                                 _labelEmail(),
-//                               ],
-//                             ),
-//                             _inputEmail(),
-//                             Row(
-//                               children: [
-//                                 _labelPassword(),
-//                               ],
-//                             ),
-//                             _inputPassword(),
-//                             Row(
-//                               children: [
-//                                 _labelAddress(),
-//                               ],
-//                             ),
-//                             _inputAddress(),
-//                             _buttonRegister(),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
+class _RegisterState extends State<Register> {
+  final _formKey = GlobalKey<FormState>();
+  late bool _isLoading = false;
 
-//   _titleAuth() {
-//     return Container(
-//       margin: const EdgeInsets.only(bottom: 20),
-//       child: const Text(
-//         "Register",
-//         style: TextStyle(
-//           fontSize: 20,
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//     );
-//   }
+  final _nameTextboxController = TextEditingController();
+  final _emailTextboxController = TextEditingController();
+  final _passwordTextboxController = TextEditingController();
+  final _addressTextboxController = TextEditingController();
 
-//   _buttonRegister() {
-//     return Container(
-//       margin: const EdgeInsets.only(top: 10),
-//       child: ElevatedButton(
-//         style: ElevatedButton.styleFrom(
-//             primary: Color(0xFFDA580F),
-//             minimumSize: const Size.fromHeight(45),
-//             shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(50),),),
-//         onPressed: () {
-//           Navigator.of(context)
-//               .push(MaterialPageRoute(builder: (context) => Home(),),);
-//         },
-//         child: Text(
-//           "Register",
-//           style: TextStyle(
-//             color: Color.fromRGBO(255, 255, 255, 1),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
+  late BuildContext loadingContext;
 
-//   _labelName() {
-//     return Container(
-//       margin: const EdgeInsets.only(bottom: 20),
-//       child: const Text(
-//         "Name",
-//         style: TextStyle(
-//           fontSize: 12,
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//     );
-//   }
+  @override
+  Widget build(BuildContext context) {
+    loadingContext = context;
 
-//   _inputName() {
-//     return Container(
-//         margin: const EdgeInsets.only(bottom: 20),
-//         child: TextFormField(
-//           style: TextStyle(fontSize: 14, color: ThemeColors.dark()),
-//           cursorColor: ThemeColors.dark(),
-//           decoration: InputDecoration(
-//             contentPadding:
-//                 const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
-//             border: OutlineInputBorder(
-//               borderSide:
-//                   BorderSide(color: ThemeColors.white(), style: BorderStyle.none),
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//             fillColor: ThemeColors.white(),
-//             filled: true,
-//           ),
-//           onSaved: (String? value) {
-//             // This optional block of code can be used to run
-//             // code when the user saves the form.
-//           },
-//           validator: (String? value) {
-//             return (value != null && value.contains('@'),)
-//                 ? 'Do not use the @ char.'
-//                 : null;
-//           },
-//         ),);
-//   }
+    return Scaffold(
+      body: Container(
+        height: MediaQuery.of(context).size.height * 1,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: const AssetImage("images/bg-sushiarigato.jpg"),
+            fit: BoxFit.cover,
+            colorFilter:
+                ColorFilter.mode(ThemeColors.darkOverlay80(), BlendMode.darken),
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 50, bottom: 15),
+                    child: Text(
+                      'SushiArigato',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                        color: ThemeColors.primary(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                    top: 15, bottom: 15, left: 15, right: 15),
+                child: SizedBox(
+                  height: 620,
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    color: ThemeColors.whiteOverlay80(),
+                    child: Container(
+                      margin: const EdgeInsets.only(
+                        top: 20,
+                        bottom: 20,
+                        left: 20,
+                        right: 20,
+                      ),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            _titleForm(),
+                            Row(
+                              children: [
+                                _labelForm("Full Name"),
+                              ],
+                            ),
+                            _inputForm(
+                              _nameTextboxController,
+                              TextInputType.name,
+                            ),
+                            Row(
+                              children: [
+                                _labelForm("Email Address"),
+                              ],
+                            ),
+                            _inputForm(
+                              _emailTextboxController,
+                              TextInputType.emailAddress,
+                            ),
+                            Row(
+                              children: [
+                                _labelForm("Password"),
+                              ],
+                            ),
+                            _inputFormSecure(
+                              _passwordTextboxController,
+                              TextInputType.text,
+                            ),
+                            Row(
+                              children: [
+                                _labelForm("Address"),
+                              ],
+                            ),
+                            _textareaForm(_addressTextboxController,
+                                TextInputType.multiline),
+                            _buttonRegister(),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
-//   _labelEmail() {
-//     return Container(
-//       margin: const EdgeInsets.only(bottom: 20),
-//       child: const Text(
-//         "Email",
-//         style: TextStyle(
-//           fontSize: 12,
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//     );
-//   }
+  _titleForm() {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: const Text(
+        "Register",
+        style: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
 
-//   _inputEmail() {
-//     return Container(
-//         margin: const EdgeInsets.only(bottom: 20),
-//         child: TextFormField(
-//           style: TextStyle(fontSize: 14, color: ThemeColors.dark()),
-//           cursorColor: ThemeColors.dark(),
-//           decoration: InputDecoration(
-//             contentPadding:
-//                 const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
-//             border: OutlineInputBorder(
-//               borderSide:
-//                   BorderSide(color: ThemeColors.white(), style: BorderStyle.none),
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//             fillColor: ThemeColors.white(),
-//             filled: true,
-//           ),
-//           onSaved: (String? value) {
-//             // This optional block of code can be used to run
-//             // code when the user saves the form.
-//           },
-//           validator: (String? value) {
-//             return (value != null && value.contains('@'),)
-//                 ? 'Do not use the @ char.'
-//                 : null;
-//           },
-//         ),);
-//   }
+  _labelForm(String text) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
 
-//   _labelPassword() {
-//     return Container(
-//       margin: const EdgeInsets.only(bottom: 20),
-//       child: const Text(
-//         "Password",
-//         style: TextStyle(
-//           fontSize: 12,
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//     );
-//   }
+  _inputForm(dynamic controller, TextInputType type) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        style: TextStyle(
+          fontSize: 14,
+          color: ThemeColors.dark(),
+        ),
+        cursorColor: ThemeColors.dark(),
+        keyboardType: type,
+        controller: controller,
+        decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: ThemeColors.white(),
+              style: BorderStyle.none,
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          fillColor: ThemeColors.white(),
+          filled: true,
+        ),
+        validator: (String? value) {
+          if (value!.isEmpty) {
+            return 'Tidak boleh kosong';
+          }
 
-//   _inputPassword() {
-//     return Container(
-//         margin: const EdgeInsets.only(bottom: 20),
-//         child: TextFormField(
-//           style: TextStyle(fontSize: 14, color: ThemeColors.dark()),
-//           obscureText: true,
-//           cursorColor: ThemeColors.dark(),
-//           decoration: InputDecoration(
-//             contentPadding:
-//                 const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
-//             border: OutlineInputBorder(
-//               borderSide:
-//                   BorderSide(color: ThemeColors.white(), style: BorderStyle.none),
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//             fillColor: ThemeColors.white(),
-//             filled: true,
-//           ),
-//           onSaved: (String? value) {
-//             // This optional block of code can be used to run
-//             // code when the user saves the form.
-//           },
-//           validator: (String? value) {
-//             return (value != null && value.contains('@'),)
-//                 ? 'Do not use the @ char.'
-//                 : null;
-//           },
-//         ),);
-//   }
+          return null;
+        },
+      ),
+    );
+  }
 
-//   _labelAddress() {
-//     return Container(
-//       margin: const EdgeInsets.only(bottom: 20),
-//       child: const Text(
-//         "Address",
-//         style: TextStyle(
-//           fontSize: 12,
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//     );
-//   }
+  _textareaForm(dynamic controller, TextInputType type) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        maxLines: 4,
+        style: TextStyle(
+          fontSize: 14,
+          color: ThemeColors.dark(),
+        ),
+        cursorColor: ThemeColors.dark(),
+        keyboardType: type,
+        controller: controller,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.only(
+            left: 14.0,
+            bottom: 14.0,
+            top: 14.0,
+            right: 14.0,
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: ThemeColors.white(),
+              style: BorderStyle.none,
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          fillColor: ThemeColors.white(),
+          filled: true,
+        ),
+        validator: (String? value) {
+          // if (value!.isEmpty) {
+          //   return 'Tidak boleh kosong';
+          // }
+          return null;
+        },
+      ),
+    );
+  }
 
-//   _inputAddress() {
-//     return Container(
-//         margin: const EdgeInsets.only(bottom: 20),
-//         child: TextFormField(
-//           style: TextStyle(fontSize: 14, color: ThemeColors.dark()),
-//           cursorColor: ThemeColors.dark(),
-//           maxLines: 4,
-//           //or null
-//           decoration: InputDecoration(
-//             contentPadding:
-//                 const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
-//             border: OutlineInputBorder(
-//               borderSide:
-//                   BorderSide(color: ThemeColors.white(), style: BorderStyle.none),
-//               borderRadius: BorderRadius.circular(10),
-//             ),
-//             fillColor: ThemeColors.white(),
-//             filled: true,
-//           ),
-//           onSaved: (String? value) {
-//             // This optional block of code can be used to run
-//             // code when the user saves the form.
-//           },
-//           validator: (String? value) {
-//             return (value != null && value.contains('@'),)
-//                 ? 'Do not use the @ char.'
-//                 : null;
-//           },
-//         ),);
-//   }
-// }
+  _inputFormSecure(dynamic controller, TextInputType type) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      child: TextFormField(
+        style: TextStyle(
+          fontSize: 14,
+          color: ThemeColors.dark(),
+        ),
+        cursorColor: ThemeColors.dark(),
+        keyboardType: type,
+        controller: controller,
+        obscureText: true,
+        decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.only(left: 14.0, bottom: 8.0, top: 8.0),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: ThemeColors.white(),
+              style: BorderStyle.none,
+            ),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          fillColor: ThemeColors.white(),
+          filled: true,
+        ),
+        validator: (String? value) {
+          if (value!.isEmpty) {
+            return 'Tidak boleh kosong';
+          }
+
+          return null;
+        },
+      ),
+    );
+  }
+
+  Widget _buttonRegister() {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: ThemeColors.primary(),
+          minimumSize: const Size.fromHeight(45),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+        onPressed: () {
+          var validate = _formKey.currentState!.validate();
+          if (validate) {
+            var validate = _formKey.currentState!.validate();
+            if (validate) {
+              if (!_isLoading) _submitRegister();
+            }
+          }
+        },
+        child: Text(
+          "Register",
+          style: TextStyle(
+            color: ThemeColors.white(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _submitRegister() {
+    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+      Future.delayed(Duration.zero, () => _showDialog(loadingContext));
+    });
+    RegisterBloc.register(
+      name: _nameTextboxController.text,
+      email: _emailTextboxController.text,
+      password: _passwordTextboxController.text,
+      address: _addressTextboxController.text,
+    ).then((value) async {
+      Navigator.pop(loadingContext);
+
+      try {
+        await Session().setToken(
+          value.token.toString(),
+        );
+
+        await Session().setUserId(value.userID.toString());
+
+        // ignore: use_build_context_synchronously
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ProductList(),
+          ),
+        );
+      } catch (error) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => WarningDialog(
+            description: value.toString(),
+          ),
+        );
+      }
+    }, onError: (error) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => WarningDialog(
+          description: error.toString(),
+        ),
+      );
+    });
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const LoadingDialog(),
+    );
+  }
+}

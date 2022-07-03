@@ -22,7 +22,7 @@ class WarningDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(Consts.padding),
       ),
       elevation: 0.0,
-      backgroundColor: ThemeColors.darkOverlay30(),
+      backgroundColor: ThemeColors.lightOverlay80(),
       child: dialogContent(context),
     );
   }
@@ -35,44 +35,66 @@ class WarningDialog extends StatelessWidget {
         left: Consts.padding,
         right: Consts.padding,
       ),
-      margin: const EdgeInsets.only(top: Consts.avatarRadius),
       decoration: BoxDecoration(
         color: ThemeColors.white(),
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(Consts.padding),
-        boxShadow: [
-          BoxShadow(
-            color: ThemeColors.dark(),
-            blurRadius: 10.0,
-            // offset: const Offset(0.0, 10.0),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Text(
-            "Gagal",
-            style: TextStyle(
-                fontSize: 24.0, fontWeight: FontWeight.w700, color: Colors.red),
-          ),
-          const SizedBox(height: 16.0),
-          Text(
-            description!,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.0,
-              color: ThemeColors.dark(),
+          Container(
+            margin: const EdgeInsets.only(bottom: 25),
+            child: Text(
+              "Gagal",
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w700,
+                color: ThemeColors.danger(),
+              ),
             ),
           ),
-          const SizedBox(height: 24.0),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // To close the dialog
-              },
-              child: const Text("OK"),
+          Container(
+            height: 120,
+            width: 120,
+            margin: const EdgeInsets.only(bottom: 25),
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('images/sushiarigato-sad.png'),
+                  fit: BoxFit.cover),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 15),
+            child: Text(
+              description!,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.0,
+                color: ThemeColors.dark(),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 50),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: ThemeColors.primary(),
+                      minimumSize: const Size.fromHeight(45),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                    child: const Text("OK"),
+                  ),
+                )
+              ],
             ),
           )
         ],

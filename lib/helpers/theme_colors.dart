@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class ThemeColors {
-  static Color primary() => const Color.fromRGBO(218, 89, 15, 1);
+  static Color primary() => const Color.fromRGBO(242, 110, 34, 1);
   static Color success() => const Color.fromRGBO(31, 184, 7, 1);
   static Color info() => const Color.fromRGBO(0, 194, 253, 1);
   static Color warning() => const Color.fromRGBO(255, 200, 0, 1);

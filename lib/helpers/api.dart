@@ -13,7 +13,7 @@ class Api {
       HttpHeaders.authorizationHeader: "Bearer $token",
     });
 
-    return responseCheck(response);
+    return jsonDecode(response.body);
   }
 
   Future<dynamic> post(dynamic url, dynamic data) async {
@@ -22,7 +22,7 @@ class Api {
       HttpHeaders.authorizationHeader: "Bearer $token",
     });
 
-    return responseCheck(response);
+    return jsonDecode(response.body);
   }
 
   Future<dynamic> put(dynamic url, dynamic data) async {
@@ -31,7 +31,7 @@ class Api {
       HttpHeaders.authorizationHeader: "Bearer $token",
     });
 
-    return responseCheck(response);
+    return jsonDecode(response.body);
   }
 
   Future<dynamic> delete(dynamic url) async {
@@ -40,7 +40,7 @@ class Api {
       HttpHeaders.authorizationHeader: "Bearer $token",
     });
 
-    return responseCheck(response);
+    return jsonDecode(response.body);
   }
 
   dynamic responseCheck(http.Response response) {

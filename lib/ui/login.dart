@@ -1,8 +1,12 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:sushiarigato/helpers/theme_colors.dart';
 import 'package:sushiarigato/ui/admin/product/product_list.dart';
 import 'package:sushiarigato/bloc/login_bloc.dart';
 import 'package:sushiarigato/helpers/session.dart';
+import 'package:sushiarigato/widget/loading_dialog.dart';
+import 'package:sushiarigato/widget/success_dialog.dart';
 import 'package:sushiarigato/widget/warning_dialog.dart';
 
 class Login extends StatefulWidget {
@@ -19,8 +23,12 @@ class _LoginState extends State<Login> {
   final _emailTextboxController = TextEditingController();
   final _passwordTextboxController = TextEditingController();
 
+  late BuildContext loadingContext;
+
   @override
   Widget build(BuildContext context) {
+    loadingContext = context;
+
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height * 1,
@@ -30,7 +38,7 @@ class _LoginState extends State<Login> {
             image: const AssetImage("images/bg-sushiarigato.jpg"),
             fit: BoxFit.cover,
             colorFilter:
-                ColorFilter.mode(ThemeColors.darkOverlay50(), BlendMode.darken),
+                ColorFilter.mode(ThemeColors.darkOverlay80(), BlendMode.darken),
           ),
         ),
         child: SingleChildScrollView(
@@ -153,7 +161,7 @@ class _LoginState extends State<Login> {
               color: ThemeColors.white(),
               style: BorderStyle.none,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           fillColor: ThemeColors.white(),
           filled: true,
@@ -189,7 +197,7 @@ class _LoginState extends State<Login> {
               color: ThemeColors.white(),
               style: BorderStyle.none,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           fillColor: ThemeColors.white(),
           filled: true,
@@ -213,7 +221,7 @@ class _LoginState extends State<Login> {
           primary: ThemeColors.primary(),
           minimumSize: const Size.fromHeight(45),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
         onPressed: () {
@@ -239,13 +247,14 @@ class _LoginState extends State<Login> {
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
+      Future.delayed(Duration.zero, () => _showDialog(loadingContext));
     });
     LoginBloc.login(
-      // email: _emailTextboxController.text,
-      // password: _passwordTextboxController.text,
-      email: "users1@gmail.com",
-      password: "secret",
+      email: _emailTextboxController.text,
+      password: _passwordTextboxController.text,
     ).then((value) async {
+      Navigator.pop(loadingContext);
+
       try {
         await Session().setToken(
           value.token.toString(),
@@ -265,7 +274,7 @@ class _LoginState extends State<Login> {
           context: context,
           barrierDismissible: false,
           builder: (BuildContext context) => WarningDialog(
-            description: "Login gagal, silahkan coba lagi. ${error.toString()}",
+            description: value.toString(),
           ),
         );
       }
@@ -274,12 +283,20 @@ class _LoginState extends State<Login> {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) => WarningDialog(
-          description: "Login gagal, silahkan coba lagi. ${error.toString()}",
+          description: error.toString(),
         ),
       );
     });
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const LoadingDialog(),
+    );
   }
 }

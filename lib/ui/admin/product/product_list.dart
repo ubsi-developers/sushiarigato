@@ -117,8 +117,8 @@ class _ProductListState extends State<ProductList> {
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
-            width: 100,
-            height: 100,
+            width: 120,
+            height: 120,
             margin: const EdgeInsets.all(15),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
@@ -136,20 +136,49 @@ class _ProductListState extends State<ProductList> {
             children: [
               Container(
                 margin: const EdgeInsets.only(top: 15),
+                child: Row(
+                  children: [
+                    Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 5),
+                      child: Text(
+                        "(${product.discount}%)",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: ThemeColors.danger(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(top: 5, bottom: 5),
                 child: Text(
-                  product.name,
+                  product.categoryName,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w300,
+                  ),
                 ),
               ),
               Container(
                 margin: const EdgeInsets.only(bottom: 5),
                 child: Text(
-                  product.categoryName,
-                  style: const TextStyle(
+                  "Rp. ${product.price}",
+                  style: TextStyle(
                     fontSize: 10,
-                    fontStyle: FontStyle.italic,
                     fontWeight: FontWeight.w300,
+                    color: ThemeColors.primary(),
+                    decoration: TextDecoration.lineThrough,
                   ),
                 ),
               ),
