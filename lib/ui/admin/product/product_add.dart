@@ -5,6 +5,7 @@ import 'package:sushiarigato/helpers/theme_colors.dart';
 import 'package:sushiarigato/model/product.dart';
 import 'package:sushiarigato/ui/admin/product/product_list.dart';
 import 'package:sushiarigato/widget/header.dart';
+import 'package:sushiarigato/widget/loading_dialog.dart';
 import 'package:sushiarigato/widget/warning_dialog.dart';
 
 class ProductAdd extends StatefulWidget {
@@ -25,8 +26,12 @@ class _ProductAddState extends State<ProductAdd> {
   final _discountTextController = TextEditingController();
   final _imageTextController = TextEditingController();
 
+  late BuildContext loadingContext;
+
   @override
   Widget build(BuildContext context) {
+    loadingContext = context;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ThemeColors.primary(),
@@ -124,7 +129,7 @@ class _ProductAddState extends State<ProductAdd> {
               color: ThemeColors.white(),
               style: BorderStyle.none,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           fillColor: ThemeColors.white(),
           filled: true,
@@ -185,16 +190,15 @@ class _ProductAddState extends State<ProductAdd> {
                       color: ThemeColors.white(),
                       style: BorderStyle.none,
                     ),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   fillColor: ThemeColors.white(),
                   filled: true,
                 ),
                 items: list,
                 onChanged: (dynamic selected) async {
-                  var selectedItem = list[selected].value;
                   setState(() {
-                    categoryId = dropDownItemsMap[selectedItem].id;
+                    categoryId = selected;
                   });
                 },
               ),
@@ -235,15 +239,15 @@ class _ProductAddState extends State<ProductAdd> {
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(
             left: 14.0,
-            bottom: 8.0,
-            top: 8.0,
+            bottom: 14.0,
+            top: 14.0,
           ),
           border: OutlineInputBorder(
             borderSide: BorderSide(
               color: ThemeColors.white(),
               style: BorderStyle.none,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           fillColor: ThemeColors.white(),
           filled: true,
@@ -271,7 +275,7 @@ class _ProductAddState extends State<ProductAdd> {
           primary: color,
           minimumSize: const Size.fromHeight(45),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
         onPressed: () {
@@ -297,6 +301,7 @@ class _ProductAddState extends State<ProductAdd> {
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
+      Future.delayed(Duration.zero, () => _showDialog(loadingContext));
     });
 
     Product product = Product();
@@ -311,6 +316,7 @@ class _ProductAddState extends State<ProductAdd> {
     ProductBloc.add(
       product: product,
     ).then((value) async {
+      Navigator.pop(loadingContext);
       try {
         if (value["status"]) {
           Navigator.pushReplacement(
@@ -352,5 +358,13 @@ class _ProductAddState extends State<ProductAdd> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const LoadingDialog(),
+    );
   }
 }

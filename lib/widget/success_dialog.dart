@@ -22,60 +22,75 @@ class SuccessDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(Consts.padding),
       ),
       elevation: 0.0,
-      backgroundColor: ThemeColors.darkOverlay30(),
+      backgroundColor: ThemeColors.lightOverlay80(),
       child: dialogContent(context),
     );
   }
 
   dialogContent(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(
-        top: Consts.padding,
-        bottom: Consts.padding,
-        left: Consts.padding,
-        right: Consts.padding,
-      ),
-      margin: const EdgeInsets.only(top: Consts.avatarRadius),
+      padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
         color: ThemeColors.white(),
         shape: BoxShape.rectangle,
         borderRadius: BorderRadius.circular(Consts.padding),
-        boxShadow: [
-          BoxShadow(
-            color: ThemeColors.dark(),
-            blurRadius: 10.0,
-            // offset: const Offset(0.0, 10.0),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            "Berhasil",
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.w700,
-              color: ThemeColors.success(),
+          Container(
+            margin: const EdgeInsets.only(bottom: 25),
+            child: Text(
+              "Gagal",
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.w700,
+                color: ThemeColors.success(),
+              ),
             ),
           ),
-          const SizedBox(height: 16.0),
-          Text(
-            description!,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.0,
-              color: ThemeColors.dark(),
+          Container(
+            height: 120,
+            width: 120,
+            margin: const EdgeInsets.only(bottom: 25),
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('images/sushiarigato-smile.png'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          const SizedBox(height: 24.0),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // To close the dialog
-              },
-              child: const Text("OK"),
+          Container(
+            margin: const EdgeInsets.only(top: 50),
+            child: Text(
+              description!,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.0,
+                color: ThemeColors.dark(),
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(top: 50),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: ThemeColors.primary(),
+                      minimumSize: const Size.fromHeight(45),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // To close the dialog
+                    },
+                    child: const Text("OK"),
+                  ),
+                )
+              ],
             ),
           )
         ],

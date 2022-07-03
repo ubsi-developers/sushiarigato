@@ -5,6 +5,7 @@ import 'package:sushiarigato/helpers/theme_colors.dart';
 import 'package:sushiarigato/model/product.dart';
 import 'package:sushiarigato/ui/admin/product/product_list.dart';
 import 'package:sushiarigato/widget/header.dart';
+import 'package:sushiarigato/widget/loading_dialog.dart';
 import 'package:sushiarigato/widget/warning_dialog.dart';
 
 class ProductDelete extends StatefulWidget {
@@ -22,8 +23,12 @@ class _ProductDeleteState extends State<ProductDelete> {
   final _formKey = GlobalKey<FormState>();
   late bool _isLoading = false;
 
+  late BuildContext loadingContext;
+
   @override
   Widget build(BuildContext context) {
+    loadingContext = context;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ThemeColors.primary(),
@@ -68,6 +73,7 @@ class _ProductDeleteState extends State<ProductDelete> {
                 ),
               ),
               Container(
+                margin: const EdgeInsets.only(top: 50, bottom: 50),
                 child: Row(
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -95,18 +101,18 @@ class _ProductDeleteState extends State<ProductDelete> {
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(bottom: 5),
+                          margin: const EdgeInsets.only(bottom: 15),
                           child: Text(
                             widget.product.categoryName,
                             style: const TextStyle(
-                              fontSize: 10,
+                              fontSize: 12,
                               fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.w300,
                             ),
                           ),
                         ),
                         Container(
-                          margin: const EdgeInsets.only(bottom: 5),
+                          margin: const EdgeInsets.only(bottom: 15),
                           child: Text(
                             "Rp. ${widget.product.price}",
                             style: TextStyle(
@@ -132,189 +138,6 @@ class _ProductDeleteState extends State<ProductDelete> {
     );
   }
 
-  _labelForm(String labelText) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 15,
-        right: 15,
-        top: 0,
-        bottom: 15,
-      ),
-      child: Text(
-        labelText,
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: ThemeColors.dark(),
-        ),
-      ),
-    );
-  }
-
-  _inputForm(dynamic controller, TextInputType type) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 15,
-        right: 15,
-        top: 0,
-        bottom: 25,
-      ),
-      child: TextFormField(
-        style: TextStyle(
-          fontSize: 14,
-          color: ThemeColors.dark(),
-        ),
-        cursorColor: ThemeColors.dark(),
-        keyboardType: type,
-        controller: controller,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.only(
-            left: 14.0,
-            bottom: 8.0,
-            top: 8.0,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeColors.white(),
-              style: BorderStyle.none,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          fillColor: ThemeColors.white(),
-          filled: true,
-        ),
-        validator: (String? value) {
-          // if (value!.isEmpty) {
-          //   return 'Tidak boleh kosong';
-          // }
-          return null;
-        },
-      ),
-    );
-  }
-
-  _selectFormCategory() {
-    return DropdownButtonHideUnderline(
-      child: FutureBuilder<List>(
-        future: CategoryBloc.getCategories(),
-        builder: (context, snapshot) {
-          List<DropdownMenuItem<dynamic>> list = [];
-          if (snapshot.hasError) {
-            return Container();
-          } else if (snapshot.hasData) {
-            //listItemNames.clear();
-            var dropDownItemsMap = {};
-
-            snapshot.data?.forEach((item) {
-              //listItemNames.add(branchItem.itemName);
-              int? index = snapshot.data?.indexOf(item);
-              dropDownItemsMap[index] = item;
-
-              list.add(
-                DropdownMenuItem(
-                  value: item.id,
-                  child: Text(item.name),
-                ),
-              );
-            });
-
-            return Container(
-              padding: const EdgeInsets.only(
-                left: 15,
-                right: 15,
-                top: 0,
-                bottom: 25,
-              ),
-              child: DropdownButtonFormField(
-                // value: categoryId,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: ThemeColors.dark(),
-                ),
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.only(
-                    left: 14.0,
-                    bottom: 8.0,
-                    top: 8.0,
-                  ),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: ThemeColors.white(),
-                      style: BorderStyle.none,
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  fillColor: ThemeColors.white(),
-                  filled: true,
-                ),
-                items: list,
-                onChanged: (dynamic selected) async {
-                  var selectedItem = list[selected].value;
-                  setState(() {
-                    // categoryId = dropDownItemsMap[selectedItem].id;
-                  });
-                },
-              ),
-            );
-          } else {
-            return Container(
-              padding: const EdgeInsets.only(
-                left: 15,
-                right: 15,
-                top: 0,
-                bottom: 25,
-              ),
-              child: const Text("Loading..."),
-            );
-          }
-        },
-      ),
-    );
-  }
-
-  _textareaForm(dynamic controller, TextInputType type) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: 15,
-        right: 15,
-        top: 0,
-        bottom: 25,
-      ),
-      child: TextFormField(
-        maxLines: 8,
-        style: TextStyle(
-          fontSize: 14,
-          color: ThemeColors.dark(),
-        ),
-        cursorColor: ThemeColors.dark(),
-        keyboardType: type,
-        controller: controller,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.only(
-            left: 14.0,
-            bottom: 8.0,
-            top: 8.0,
-          ),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeColors.white(),
-              style: BorderStyle.none,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          fillColor: ThemeColors.white(),
-          filled: true,
-        ),
-        validator: (String? value) {
-          // if (value!.isEmpty) {
-          //   return 'Tidak boleh kosong';
-          // }
-          return null;
-        },
-      ),
-    );
-  }
-
   _buttonForm(String text, Color color) {
     return Container(
       padding: const EdgeInsets.only(
@@ -328,7 +151,7 @@ class _ProductDeleteState extends State<ProductDelete> {
           primary: color,
           minimumSize: const Size.fromHeight(45),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
         onPressed: () {
@@ -354,6 +177,7 @@ class _ProductDeleteState extends State<ProductDelete> {
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
+      Future.delayed(Duration.zero, () => _showDialog(loadingContext));
     });
 
     Product product = Product();
@@ -361,6 +185,7 @@ class _ProductDeleteState extends State<ProductDelete> {
     ProductBloc.delete(
       product: product,
     ).then((value) async {
+      Navigator.pop(loadingContext);
       try {
         if (value["status"]) {
           Navigator.pushReplacement(
@@ -402,5 +227,13 @@ class _ProductDeleteState extends State<ProductDelete> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const LoadingDialog(),
+    );
   }
 }

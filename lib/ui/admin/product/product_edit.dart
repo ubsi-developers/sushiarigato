@@ -5,6 +5,7 @@ import 'package:sushiarigato/helpers/theme_colors.dart';
 import 'package:sushiarigato/model/product.dart';
 import 'package:sushiarigato/ui/admin/product/product_list.dart';
 import 'package:sushiarigato/widget/header.dart';
+import 'package:sushiarigato/widget/loading_dialog.dart';
 import 'package:sushiarigato/widget/warning_dialog.dart';
 
 class ProductEdit extends StatefulWidget {
@@ -29,6 +30,8 @@ class _ProductEditState extends State<ProductEdit> {
   final _discountTextController = TextEditingController();
   final _imageTextController = TextEditingController();
 
+  late BuildContext loadingContext;
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +51,7 @@ class _ProductEditState extends State<ProductEdit> {
 
   @override
   Widget build(BuildContext context) {
+    loadingContext = context;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ThemeColors.primary(),
@@ -145,7 +149,7 @@ class _ProductEditState extends State<ProductEdit> {
               color: ThemeColors.white(),
               style: BorderStyle.none,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           fillColor: ThemeColors.white(),
           filled: true,
@@ -199,24 +203,28 @@ class _ProductEditState extends State<ProductEdit> {
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.only(
                     left: 14.0,
-                    bottom: 8.0,
-                    top: 8.0,
+                    bottom: 14.0,
+                    top: 14.0,
+                    right: 14.0,
                   ),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: ThemeColors.white(),
                       style: BorderStyle.none,
                     ),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   fillColor: ThemeColors.white(),
                   filled: true,
                 ),
                 items: list,
                 onChanged: (dynamic selected) async {
-                  var selectedItem = list[selected].value;
+                  // var selectedItem = list[selected].value;
+                  // print("-----------: " + selected.toString());
                   setState(() {
-                    categoryId = dropDownItemsMap[selectedItem].id;
+                    categoryId = selected;
+                    // print("================: " + categoryId.toString());
+                    // categoryId = dropDownItemsMap[selectedItem].id;
                   });
                 },
               ),
@@ -265,7 +273,7 @@ class _ProductEditState extends State<ProductEdit> {
               color: ThemeColors.white(),
               style: BorderStyle.none,
             ),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
           fillColor: ThemeColors.white(),
           filled: true,
@@ -293,7 +301,7 @@ class _ProductEditState extends State<ProductEdit> {
           primary: color,
           minimumSize: const Size.fromHeight(45),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
         onPressed: () {
@@ -319,6 +327,7 @@ class _ProductEditState extends State<ProductEdit> {
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
+      Future.delayed(Duration.zero, () => _showDialog(loadingContext));
     });
 
     Product product = Product();
@@ -334,6 +343,7 @@ class _ProductEditState extends State<ProductEdit> {
     ProductBloc.edit(
       product: product,
     ).then((value) async {
+      Navigator.pop(loadingContext);
       try {
         if (value["status"]) {
           Navigator.pushReplacement(
@@ -375,5 +385,13 @@ class _ProductEditState extends State<ProductEdit> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => const LoadingDialog(),
+    );
   }
 }

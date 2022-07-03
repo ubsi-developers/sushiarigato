@@ -1,15 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:sushiarigato/helpers/theme_colors.dart';
 
-class Loading extends StatelessWidget {
-  const Loading({Key? key}) : super(key: key);
+class Consts {
+  Consts._();
+
+  static const double padding = 16.0;
+  static const double avatarRadius = 66.0;
+}
+
+class LoadingDialog extends StatelessWidget {
+  final VoidCallback? okClick;
+
+  const LoadingDialog({Key? key, this.okClick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Consts.padding),
+      ),
+      elevation: 0.0,
+      backgroundColor: ThemeColors.lightOverlay80(),
+      child: dialogContent(context),
+    );
+  }
+
+  dialogContent(BuildContext context) {
     return Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.only(top: 100),
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: ThemeColors.white(),
+        shape: BoxShape.rectangle,
+        borderRadius: BorderRadius.circular(Consts.padding),
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             height: 150,
@@ -17,8 +42,9 @@ class Loading extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 25),
             decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('images/sushiarigato-smile.png'),
-                  fit: BoxFit.cover),
+                image: AssetImage('images/sushiarigato-smile.png'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           Container(
